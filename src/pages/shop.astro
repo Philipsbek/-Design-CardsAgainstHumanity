@@ -1,0 +1,190 @@
+---
+import Base from '../layouts/Base.astro';
+import { products } from '../data/content.js';
+
+const accentClass = { red: 'card--red', violet: 'card--violet', gold: 'card--gold' };
+const badgeClass = { red: 'badge--red', violet: 'badge--violet', gold: 'badge--gold' };
+const faceClass = {
+  white: '', lemon: 'card--lemon', lavender: 'card--lavender', sky: 'card--sky',
+  mint: 'card--mint', bubblegum: 'card--bubblegum', tangerine: 'card--tangerine',
+};
+---
+
+<Base title="Shop — Cards Against Humanity" description="Buy the main game, expansions, and packs. Add to cart and check out your terrible decisions.">
+  <!-- Header -->
+  <section class="section section--black shop-hero">
+    <div class="container">
+      <span class="badge badge--gold reveal">The store</span>
+      <h1 class="display reveal" data-delay="1">Shop the deck.</h1>
+      <p class="body reveal" data-delay="2" style="opacity:0.8; max-width: 48ch;">
+        Everything you need to make dinner uncomfortable. Prices in fake dollars. Cart
+        is yours alone — nothing leaves your browser.
+      </p>
+    </div>
+  </section>
+
+  <!-- Grid -->
+  <section class="section section--white">
+    <div class="container shop-layout">
+      <div class="shop-grid">
+        {products.map((p, i) => (
+          <article class:list={['card', accentClass[p.accent], 'product', 'reveal']} data-delay={String(i % 4)}>
+            <div class:list={['card', faceClass[p.color], 'product__face']}>
+              <span class="product__count">{p.count}</span>
+              <span class="product__facelogo">Cards Against Humanity</span>
+            </div>
+            <div class="product__body">
+              <div class="product__row">
+                <h2 class="heading-sm">{p.name}</h2>
+                <span class:list={['badge', badgeClass[p.accent]]}>{p.badge}</span>
+              </div>
+              <p class="body product__desc">{p.desc}</p>
+              <div class="product__row product__row--foot">
+                <span class="heading">${p.price}</span>
+                <button
+                  class="btn btn--dark btn--sm product__add"
+                  data-add
+                  data-id={p.id}
+                  data-name={p.name}
+                  data-price={p.price}
+                >Add to cart</button>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- Cart -->
+      <aside class="cart card card--black" id="cart" aria-label="Shopping cart">
+        <h2 class="heading-sm">Your cart</h2>
+        <ul class="cart__list" id="cart-list">
+          <li class="cart__empty body" id="cart-empty">Empty. Go make some regrets.</li>
+        </ul>
+        <div class="cart__foot">
+          <div class="cart__total-row">
+            <span class="body-bold">Total</span>
+            <span class="heading-sm" id="cart-total">$0</span>
+          </div>
+          <button class="btn btn--light" id="cart-checkout" disabled>Check out</button>
+          <p class="caption cart__note" id="cart-note" hidden>
+            This is a placeholder store — no real order was placed. Nicely done, though.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .shop-hero { padding-block: clamp(56px, 8vw, 100px); }
+  .shop-hero h1 { margin: 20px 0 16px; }
+
+  .shop-layout { display: grid; grid-template-columns: 1fr 320px; gap: 32px; align-items: start; }
+  .shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+  .product { display: flex; flex-direction: column; gap: 18px; padding: 18px; }
+  .product__face {
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+  }
+  .product__count { font-weight: 800; font-size: var(--text-body-sm); opacity: 0.7; }
+  .product__facelogo { font-size: 11px; font-weight: 800; opacity: 0.55; }
+  .product__body { display: flex; flex-direction: column; gap: 12px; }
+  .product__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .product__row--foot { margin-top: 4px; }
+  .product__desc { font-weight: 400; }
+
+  /* Cart */
+  .cart {
+    position: sticky;
+    top: 96px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .cart__list { display: flex; flex-direction: column; gap: 12px; min-height: 60px; }
+  .cart__empty { opacity: 0.5; font-weight: 400; }
+  .cart__item { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: var(--text-body-sm); }
+  .cart__item-name { font-weight: 800; }
+  .cart__item-qty { opacity: 0.6; font-weight: 400; }
+  .cart__remove { color: var(--color-signal-red); font-weight: 800; font-size: 18px; line-height: 1; }
+  .cart__foot { display: flex; flex-direction: column; gap: 14px; box-shadow: inset 0 2px 0 0 rgba(255,255,255,0.14); padding-top: 16px; }
+  .cart__total-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .cart__note { opacity: 0.6; }
+
+  @media (max-width: 900px) {
+    .shop-layout { grid-template-columns: 1fr; }
+    .cart { position: static; order: -1; }
+  }
+  @media (max-width: 560px) {
+    .shop-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  type Item = { id: string; name: string; price: number; qty: number };
+  const cart = new Map<string, Item>();
+
+  const listEl = document.getElementById('cart-list')!;
+  const emptyEl = document.getElementById('cart-empty')!;
+  const totalEl = document.getElementById('cart-total')!;
+  const checkoutEl = document.getElementById('cart-checkout') as HTMLButtonElement;
+  const noteEl = document.getElementById('cart-note')!;
+
+  function render() {
+    listEl.querySelectorAll('.cart__item').forEach((n) => n.remove());
+    let total = 0;
+    let count = 0;
+
+    cart.forEach((item) => {
+      total += item.price * item.qty;
+      count += item.qty;
+      const li = document.createElement('li');
+      li.className = 'cart__item';
+      li.innerHTML = `
+        <span><span class="cart__item-name">${item.name}</span>
+        <span class="cart__item-qty">×${item.qty}</span></span>
+        <span style="display:flex;gap:10px;align-items:center;">
+          <span>$${item.price * item.qty}</span>
+          <button class="cart__remove" data-remove="${item.id}" aria-label="Remove ${item.name}">×</button>
+        </span>`;
+      listEl.appendChild(li);
+    });
+
+    emptyEl.style.display = count ? 'none' : 'block';
+    totalEl.textContent = `$${total}`;
+    checkoutEl.disabled = count === 0;
+    if (count === 0) noteEl.hidden = true;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-add]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id!;
+      const name = btn.dataset.name!;
+      const price = Number(btn.dataset.price);
+      const existing = cart.get(id);
+      if (existing) existing.qty += 1;
+      else cart.set(id, { id, name, price, qty: 1 });
+      btn.textContent = 'Added ✓';
+      setTimeout(() => (btn.textContent = 'Add to cart'), 900);
+      render();
+    });
+  });
+
+  listEl.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    const id = t.getAttribute('data-remove');
+    if (id) { cart.delete(id); render(); }
+  });
+
+  checkoutEl.addEventListener('click', () => {
+    noteEl.hidden = false;
+    cart.clear();
+    render();
+    noteEl.hidden = false; // keep the confirmation visible after clear
+  });
+</script>

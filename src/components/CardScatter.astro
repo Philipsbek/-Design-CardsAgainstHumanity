@@ -1,0 +1,74 @@
+---
+// Decorative scattered-card background — the game-table atmosphere.
+// Cards are positioned + rotated + float gently. Purely ornamental.
+import { scatterCards } from '../data/content.js';
+
+// A blend of the data-driven pastel cards and a few blank accent cards.
+const pieces = [
+  { text: scatterCards[0].text, cls: 'card--lemon',     x: '6%',  y: '12%', rot: -14, s: 1,    d: 0 },
+  { text: '',                    cls: 'card card--red',  x: '17%', y: '58%', rot: 9,   s: 0.7,  d: 1.2 },
+  { text: scatterCards[1].text,  cls: 'card--lavender',  x: '80%', y: '10%', rot: 11,  s: 1,    d: 0.6 },
+  { text: scatterCards[3].text,  cls: 'card--bubblegum', x: '88%', y: '62%', rot: -7,  s: 0.9,  d: 2 },
+  { text: '',                    cls: 'card card--gold', x: '72%', y: '78%', rot: 15,  s: 0.65, d: 0.9 },
+  { text: scatterCards[4].text,  cls: 'card--mint',      x: '3%',  y: '74%', rot: 6,   s: 0.85, d: 1.6 },
+  { text: '',                    cls: 'card card--violet',x: '46%', y: '4%',  rot: -10, s: 0.6,  d: 0.4 },
+  { text: scatterCards[2].text,  cls: 'card--sky',       x: '92%', y: '34%', rot: -5,  s: 0.8,  d: 2.4 },
+];
+---
+<div class="scatter" aria-hidden="true">
+  {pieces.map((p) => (
+    <div
+      class:list={['scatter__card', p.cls]}
+      style={`left:${p.x}; top:${p.y}; --rot:${p.rot}deg; --scale:${p.s}; animation-delay:${p.d}s;`}
+    >
+      {p.text && <span>{p.text}</span>}
+      {!p.text && <span class="scatter__pip">CAH</span>}
+    </div>
+  ))}
+</div>
+
+<style>
+  .scatter {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .scatter__card {
+    position: absolute;
+    width: 150px;
+    min-height: 92px;
+    padding: 16px;
+    border-radius: var(--radius-cards);
+    display: flex;
+    align-items: flex-start;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--color-game-night-black);
+    transform: rotate(var(--rot)) scale(var(--scale));
+    animation: float-card 7s ease-in-out infinite;
+    will-change: transform;
+    box-shadow: var(--shadow-subtle);
+    opacity: 0.92;
+  }
+  .scatter__card.card--red,
+  .scatter__card.card--violet,
+  .scatter__card.card--gold {
+    background: var(--color-card-white);
+  }
+  .scatter__card.card--cobalt,
+  .scatter__card.card--cobalt span { color: var(--color-card-white); }
+  .scatter__pip {
+    font-size: 13px;
+    letter-spacing: -0.5px;
+    opacity: 0.35;
+  }
+
+  @media (max-width: 760px) {
+    .scatter__card { width: 116px; min-height: 72px; font-size: 12px; }
+    /* Thin the herd on small screens to reduce clutter */
+    .scatter__card:nth-child(even) { display: none; }
+  }
+</style>

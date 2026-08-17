@@ -1,0 +1,153 @@
+---
+import Base from '../layouts/Base.astro';
+import CardScatter from '../components/CardScatter.astro';
+import { faqs, stats } from '../data/content.js';
+
+const timeline = [
+  { year: '2011', text: 'Eight high-school friends launch the game on the internet with a “pay what you want” PDF.', accent: 'red' },
+  { year: '2012', text: 'The box hits shelves. Dinner parties are never quite the same again.', accent: 'violet' },
+  { year: '2015', text: 'Expansions multiply. A holiday tradition of buying nonsense is born.', accent: 'gold' },
+  { year: 'Today', text: 'Still independently owned, still a little too honest, still shipping cards.', accent: 'red' },
+];
+const accentClass = { red: 'card--red', violet: 'card--violet', gold: 'card--gold' };
+const badgeClass = { red: 'badge--red', violet: 'badge--violet', gold: 'badge--gold' };
+---
+
+<Base title="About — Cards Against Humanity" description="The story behind the party game for terrible people — and a few honest answers to your questions.">
+  <!-- Hero -->
+  <section class="section section--black about-hero">
+    <CardScatter />
+    <div class="container about-hero__inner">
+      <span class="badge badge--red reveal">The story</span>
+      <h1 class="display-sm reveal" data-delay="1">
+        We made a game.<br />It got out of hand.
+      </h1>
+      <p class="body reveal" data-delay="2" style="opacity:0.82; max-width: 54ch;">
+        Cards Against Humanity started as a birthday party experiment and turned into a
+        full-time excuse to write the worst sentences imaginable. This is a placeholder
+        tribute build — same spirit, invented words.
+      </p>
+    </div>
+  </section>
+
+  <!-- Manifesto -->
+  <section class="section section--white">
+    <div class="container manifesto">
+      <div class="sec-head reveal">
+        <span class="badge badge--violet">What we believe</span>
+        <h2 class="display-sm">Fun should be<br />a little dangerous.</h2>
+      </div>
+      <div class="manifesto__grid">
+        <p class="body reveal">
+          The best nights aren’t the polite ones. They’re the ones where someone plays the
+          exact wrong card at the exact right time and the whole table loses it. We build for
+          that moment — the gasp before the laugh.
+        </p>
+        <p class="body reveal" data-delay="1">
+          Everything here reads like a card because the card <em>is</em> the brand: heavy type,
+          stark black and white, a scatter of color on the table. No stock photography, no
+          gradients — just the deck, dealt across the felt.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="section--black stats-band">
+    <div class="container stats__grid">
+      {stats.map((s, i) => (
+        <div class="stats__item reveal" data-delay={String(i)}>
+          <span class="display-sm">{s.n}</span>
+          <span class="body-bold stats__label">{s.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="section section--white">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="badge badge--gold">How we got here</span>
+        <h2 class="display-sm">A short, messy history.</h2>
+      </div>
+      <div class="timeline">
+        {timeline.map((t, i) => (
+          <article class:list={['card', accentClass[t.accent], 'tl', 'reveal']} data-delay={String(i)}>
+            <span class="heading tl__year">{t.year}</span>
+            <p class="body">{t.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section--black">
+    <div class="container">
+      <div class="sec-head sec-head--light reveal">
+        <span class="badge badge--red">Questions</span>
+        <h2 class="display-sm">Honest answers.</h2>
+      </div>
+      <div class="faqs">
+        {faqs.map((f, i) => (
+          <details class="faq card card--black reveal" data-delay={String(i)}>
+            <summary class="subheading">{f.q}</summary>
+            <p class="body faq__a">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section--white about-cta">
+    <div class="container" style="text-align:center;">
+      <h2 class="display reveal">Ready to misbehave?</h2>
+      <div class="about-cta__actions reveal" data-delay="1">
+        <a href="/shop" class="btn btn--dark">Buy the game</a>
+        <a href="/#play" class="btn btn--dark">Play a demo hand</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-hero { overflow: hidden; }
+  .about-hero__inner { position: relative; z-index: 1; max-width: 720px; display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+
+  .sec-head { max-width: 620px; margin-bottom: 40px; display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .sec-head--light { color: var(--color-card-white); }
+
+  .manifesto__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .manifesto__grid .body { font-weight: 400; }
+
+  .stats-band { padding-block: 60px; }
+  .stats__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .stats__item { display: flex; flex-direction: column; gap: 2px; }
+  .stats__label { opacity: 0.6; }
+
+  .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .tl { display: flex; flex-direction: column; gap: 10px; padding: 24px; min-height: 190px; }
+  .tl__year { line-height: 1; }
+  .tl .body { font-weight: 400; }
+
+  .faqs { display: flex; flex-direction: column; gap: 14px; max-width: 820px; }
+  .faq { padding: 8px 24px; cursor: pointer; }
+  .faq summary { list-style: none; padding: 18px 0; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; font-size: 28px; font-weight: 800; transition: transform 0.2s ease; }
+  .faq[open] summary::after { transform: rotate(45deg); }
+  .faq__a { font-weight: 400; opacity: 0.85; padding-bottom: 20px; }
+
+  .about-cta__actions { display: flex; gap: 16px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+
+  @media (max-width: 860px) {
+    .manifesto__grid { grid-template-columns: 1fr; gap: 20px; }
+    .timeline { grid-template-columns: repeat(2, 1fr); }
+    .stats__grid { grid-template-columns: repeat(2, 1fr); gap: 32px 24px; }
+  }
+  @media (max-width: 520px) {
+    .timeline { grid-template-columns: 1fr; }
+  }
+</style>

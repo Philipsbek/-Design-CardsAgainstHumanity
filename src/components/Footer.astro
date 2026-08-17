@@ -1,0 +1,114 @@
+---
+const year = new Date().getFullYear();
+const cols = [
+  {
+    title: 'The Game',
+    links: ['The Main Game', 'Expansions', 'Family Edition', 'Blank Cards'],
+  },
+  {
+    title: 'Company',
+    links: ['About Us', 'Careers', 'Press', 'Contact'],
+  },
+  {
+    title: 'Support',
+    links: ['How to Play', 'Shipping', 'Returns', 'FAQ'],
+  },
+];
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <span class="footer__box">CAH</span>
+        <p class="heading-sm">Cards Against Humanity</p>
+        <p class="body" style="opacity:0.7; max-width: 34ch;">
+          A party game for terrible people. Made by a group of internet friends who should probably know better.
+        </p>
+      </div>
+
+      <div class="footer__cols">
+        {cols.map((c) => (
+          <div>
+            <p class="footer__col-title">{c.title}</p>
+            <ul class="footer__list">
+              {c.links.map((l) => <li><a href="#">{l}</a></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p class="caption" style="opacity:0.6;">© {year} Cards Against Humanity — placeholder tribute build. Not affiliated with the real thing.</p>
+      <div class="footer__legal">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--color-game-night-black);
+    color: var(--color-card-white);
+    padding-block: 80px 40px;
+    box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.14);
+  }
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.2fr 2fr;
+    gap: 60px;
+    padding-bottom: 60px;
+  }
+  .footer__brand { display: flex; flex-direction: column; gap: 14px; }
+  .footer__box {
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    background: var(--color-card-white);
+    color: var(--color-game-night-black);
+    border-radius: 8px;
+    font-weight: 800;
+    transform: rotate(-6deg);
+  }
+  .footer__cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .footer__col-title {
+    font-weight: 800;
+    font-size: var(--text-body-sm);
+    margin-bottom: 12px;
+  }
+  .footer__list { display: flex; flex-direction: column; gap: 10px; }
+  .footer__list a {
+    font-size: var(--text-body-sm);
+    font-weight: 400;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+  }
+  .footer__list a:hover { opacity: 1; text-decoration: underline; }
+
+  .footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-top: 32px;
+    box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.14);
+    flex-wrap: wrap;
+  }
+  .footer__legal { display: flex; gap: 24px; }
+  .footer__legal a { font-size: var(--text-caption); font-weight: 800; opacity: 0.7; }
+  .footer__legal a:hover { opacity: 1; }
+
+  @media (max-width: 760px) {
+    .footer__top { grid-template-columns: 1fr; gap: 40px; }
+    .footer__cols { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

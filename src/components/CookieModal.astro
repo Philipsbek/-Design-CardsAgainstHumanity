@@ -1,0 +1,165 @@
+---
+// Cookie / consent dialog — follows the card aesthetic: a card dealt face-up.
+---
+<div class="cookie" id="cookie-modal" hidden aria-hidden="true">
+  <div class="cookie__scrim" data-cookie-dismiss></div>
+  <div class="cookie__dialog card--black" role="dialog" aria-modal="true" aria-labelledby="cookie-title">
+    <h2 class="heading-sm" id="cookie-title">Cookie Settings</h2>
+    <p class="body" style="opacity:0.85; margin-top: 4px;">
+      We use cookies to remember your terrible choices and make the site work. Pick what you’re
+      comfortable with. Essential cookies keep the lights on and can’t be turned off.
+    </p>
+
+    <ul class="cookie__opts">
+      <li class="cookie__opt">
+        <label>
+          <input type="checkbox" checked disabled />
+          <span class="cookie__box"></span>
+          <span>Essential <em>(always on)</em></span>
+        </label>
+      </li>
+      <li class="cookie__opt">
+        <label>
+          <input type="checkbox" id="ck-analytics" checked />
+          <span class="cookie__box"></span>
+          <span>Analytics</span>
+        </label>
+      </li>
+      <li class="cookie__opt">
+        <label>
+          <input type="checkbox" id="ck-marketing" />
+          <span class="cookie__box"></span>
+          <span>Marketing</span>
+        </label>
+      </li>
+    </ul>
+
+    <div class="cookie__actions">
+      <button class="btn btn--light btn--sm" data-cookie-accept>Accept All</button>
+      <button class="btn btn--light btn--sm" data-cookie-reject>Reject All</button>
+      <button class="btn btn--light btn--sm" data-cookie-confirm>Confirm My Choices</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: end center;
+    padding: 24px;
+  }
+  .cookie__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+    animation: shimmer-in 0.3s ease;
+  }
+  .cookie__dialog {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    padding: 28px;
+    border-radius: var(--radius-cards);
+    animation: deal-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    --rot: 0deg;
+  }
+
+  .cookie__opts {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 20px 0 24px;
+  }
+  .cookie__opt label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--text-body-sm);
+    font-weight: 400;
+    cursor: pointer;
+  }
+  .cookie__opt em { opacity: 0.55; font-style: normal; }
+  .cookie__opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .cookie__box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    box-shadow: var(--shadow-subtle-2);
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    transition: background 0.15s ease;
+  }
+  .cookie__box::after {
+    content: '';
+    width: 9px;
+    height: 5px;
+    border-left: 2px solid var(--color-game-night-black);
+    border-bottom: 2px solid var(--color-game-night-black);
+    transform: rotate(-45deg) scale(0);
+    transition: transform 0.15s ease;
+  }
+  .cookie__opt input:checked + .cookie__box { background: var(--color-card-white); }
+  .cookie__opt input:checked + .cookie__box::after { transform: rotate(-45deg) scale(1); }
+  .cookie__opt input:disabled + .cookie__box { opacity: 0.6; }
+
+  .cookie__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .cookie__actions .btn { flex: 1 1 auto; }
+</style>
+
+<script>
+  const KEY = 'cah-cookie-consent';
+  const modal = document.getElementById('cookie-modal');
+
+  const open = () => {
+    if (!modal) return;
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+  };
+  const close = () => {
+    if (!modal) return;
+    modal.hidden = true;
+    modal.setAttribute('aria-hidden', 'true');
+  };
+  const save = (val: Record<string, boolean>) => {
+    try { localStorage.setItem(KEY, JSON.stringify(val)); } catch {}
+    close();
+  };
+
+  // Show only if no prior decision.
+  let decided = false;
+  try { decided = !!localStorage.getItem(KEY); } catch {}
+  if (!decided) setTimeout(open, 900);
+
+  modal?.querySelector('[data-cookie-accept]')?.addEventListener('click', () =>
+    save({ essential: true, analytics: true, marketing: true })
+  );
+  modal?.querySelector('[data-cookie-reject]')?.addEventListener('click', () =>
+    save({ essential: true, analytics: false, marketing: false })
+  );
+  modal?.querySelector('[data-cookie-confirm]')?.addEventListener('click', () => {
+    const a = document.getElementById('ck-analytics') as HTMLInputElement | null;
+    const m = document.getElementById('ck-marketing') as HTMLInputElement | null;
+    save({ essential: true, analytics: !!a?.checked, marketing: !!m?.checked });
+  });
+  modal?.querySelector('[data-cookie-dismiss]')?.addEventListener('click', () =>
+    save({ essential: true, analytics: false, marketing: false })
+  );
+
+  // Allow re-opening from footer "Cookies" link etc.
+  document.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.closest('a')?.textContent?.trim() === 'Cookies') {
+      e.preventDefault();
+      open();
+    }
+  });
+</script>

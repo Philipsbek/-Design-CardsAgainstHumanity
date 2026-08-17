@@ -1,0 +1,197 @@
+---
+import Base from '../layouts/Base.astro';
+import CardScatter from '../components/CardScatter.astro';
+import HandDemo from '../components/HandDemo.astro';
+import { BRAND, steps, quotes, stats, promptCards, answerCards } from '../data/content.js';
+
+const accentClass = { red: 'card--red', violet: 'card--violet', gold: 'card--gold' };
+const badgeClass = { red: 'badge--red', violet: 'badge--violet', gold: 'badge--gold' };
+
+// A few sample cards for the "peek inside the box" strip.
+const peekBlack = promptCards.slice(0, 2);
+const peekWhite = answerCards.slice(0, 4);
+---
+
+<Base>
+  <!-- ============ HERO ============ -->
+  <section class="section section--black hero">
+    <CardScatter />
+    <div class="container hero__inner">
+      <span class="badge badge--red reveal">The notorious party game</span>
+      <h1 class="display-lg hero__title reveal" data-delay="1">
+        Cards<br />Against<br />Humanity
+      </h1>
+      <p class="subheading hero__tagline reveal" data-delay="2">{BRAND.tagline}</p>
+      <p class="body hero__blurb reveal" data-delay="2">{BRAND.blurb}</p>
+      <div class="hero__actions reveal" data-delay="3">
+        <a href="/shop" class="btn btn--light">Buy the game — $25</a>
+        <a href="#play" class="btn btn--light">Play a demo hand</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STATS STRIP ============ -->
+  <section class="section--white stats">
+    <div class="container stats__grid">
+      {stats.map((s, i) => (
+        <div class="stats__item reveal" data-delay={String(i)}>
+          <span class="display-sm">{s.n}</span>
+          <span class="body-bold stats__label">{s.label}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ HOW TO PLAY ============ -->
+  <section class="section section--white" id="how">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="badge badge--violet">How it works</span>
+        <h2 class="display-sm">Dead simple.<br />Deeply chaotic.</h2>
+        <p class="body sec-head__sub">
+          If you can read a sentence and make a bad decision, you already know how to play.
+        </p>
+      </div>
+
+      <div class="steps">
+        {steps.map((step, i) => (
+          <article class:list={['card', accentClass[step.accent], 'step', 'reveal']} data-delay={String(i)}>
+            <span class="step__n heading-lg">{step.n}</span>
+            <h3 class="heading-sm">{step.title}</h3>
+            <p class="body">{step.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTERACTIVE DEMO ============ -->
+  <section class="section section--black" id="play">
+    <div class="container">
+      <div class="sec-head sec-head--light reveal">
+        <span class="badge badge--gold">Try it now</span>
+        <h2 class="display-sm">Play a hand.</h2>
+        <p class="body sec-head__sub" style="opacity:0.8;">
+          Here’s a black card and five of your worst options. Tap the one that wins.
+        </p>
+      </div>
+      <div class="reveal" data-delay="1">
+        <HandDemo />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PEEK INSIDE ============ -->
+  <section class="section section--white" id="peek">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="badge badge--red">Inside the box</span>
+        <h2 class="display-sm">A taste of the deck.</h2>
+      </div>
+      <div class="peek">
+        {peekBlack.map((t, i) => (
+          <div class="card card--black peek__card reveal" data-delay={String(i)}>
+            <p class="subheading">{t}</p>
+            <span class="peek__logo">Cards Against Humanity</span>
+          </div>
+        ))}
+        {peekWhite.map((t, i) => (
+          <div class="card peek__card reveal" data-delay={String(i)}>
+            <p class="subheading">{t}</p>
+            <span class="peek__logo peek__logo--dark">Cards Against Humanity</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUOTES ============ -->
+  <section class="section section--black">
+    <div class="container">
+      <div class="sec-head sec-head--light reveal">
+        <span class="badge badge--violet">Rave reviews</span>
+        <h2 class="display-sm">People who should<br />know better.</h2>
+      </div>
+      <div class="quotes">
+        {quotes.map((q, i) => (
+          <figure class:list={['card', 'card--black', accentClass[q.accent], 'quote', 'reveal']} data-delay={String(i)}>
+            <blockquote class="heading-sm quote__text">“{q.text}”</blockquote>
+            <figcaption class:list={['badge', badgeClass[q.accent]]}>{q.who}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BUY CTA ============ -->
+  <section class="section section--white buy">
+    <CardScatter />
+    <div class="container buy__inner">
+      <h2 class="display buy__title reveal">Buy the game.</h2>
+      <p class="subheading reveal" data-delay="1" style="max-width: 46ch; margin-inline:auto;">
+        Six hundred cards. One box. Endless questionable evenings with the people you love.
+      </p>
+      <div class="hero__actions reveal" data-delay="2" style="justify-content:center;">
+        <a href="/shop" class="btn btn--dark">Shop the store</a>
+        <a href="/about" class="btn btn--dark">Meet the makers</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Hero */
+  .hero { overflow: hidden; }
+  .hero__inner { position: relative; z-index: 1; text-align: center; max-width: 860px; }
+  .hero__title { margin: 24px 0 20px; }
+  .hero__tagline { margin-bottom: 16px; }
+  .hero__blurb { font-weight: 400; opacity: 0.82; max-width: 52ch; margin: 0 auto 36px; }
+  .hero__actions { display: flex; gap: 16px; justify-content: flex-start; flex-wrap: wrap; }
+  .hero__inner .hero__actions { justify-content: center; }
+
+  /* Section heads */
+  .sec-head { max-width: 620px; margin-bottom: 48px; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+  .sec-head--light { color: var(--color-card-white); }
+  .sec-head__sub { font-weight: 400; opacity: 0.75; }
+
+  /* Stats */
+  .stats { padding-block: 56px; }
+  .stats__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .stats__item { display: flex; flex-direction: column; gap: 2px; }
+  .stats__label { opacity: 0.6; }
+
+  /* Steps */
+  .steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .step { display: flex; flex-direction: column; gap: 10px; padding: 28px; min-height: 200px; }
+  .step__n { opacity: 0.18; line-height: 1; }
+  .step .body { font-weight: 400; }
+
+  /* Peek */
+  .peek { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .peek__card {
+    min-height: 210px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+  }
+  .peek__card:hover { transform: translateY(-8px) rotate(-1.5deg); }
+  .peek__logo { font-size: 11px; font-weight: 800; opacity: 0.55; margin-top: 16px; }
+  .peek__logo--dark { color: var(--color-game-night-black); }
+
+  /* Quotes */
+  .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .quote { display: flex; flex-direction: column; justify-content: space-between; gap: 24px; padding: 28px; min-height: 260px; }
+  .quote__text { font-weight: 800; line-height: 1.28; }
+  .quote figcaption { align-self: flex-start; }
+
+  /* Buy */
+  .buy { overflow: hidden; text-align: center; }
+  .buy__inner { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+
+  @media (max-width: 860px) {
+    .steps { grid-template-columns: 1fr; }
+    .peek, .quotes { grid-template-columns: 1fr; }
+    .stats__grid { grid-template-columns: repeat(2, 1fr); gap: 32px 24px; }
+  }
+</style>
